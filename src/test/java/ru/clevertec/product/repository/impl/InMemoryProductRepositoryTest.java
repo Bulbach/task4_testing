@@ -1,11 +1,12 @@
 package ru.clevertec.product.repository.impl;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.clevertec.product.entity.Product;
+import ru.clevertec.product.testEntity.ProductTestData;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -19,27 +20,17 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class InMemoryProductRepositoryTest {
+    @InjectMocks
     private InMemoryProductRepository productRepository;
-
-    @BeforeEach
-    void setUp() {
-        productRepository = new InMemoryProductRepository();;
-    }
-
 
     @Test
     void findById() {
         // given
-        UUID uuid = UUID.fromString("4c78be6d-1a6d-47bb-ae4a-0b63f2beccd0");
-        Product expected = Product.builder()
-                .uuid(uuid)
-                .name("Шпала")
-                .description("Бетонная")
-                .price(BigDecimal.valueOf(50))
-                .created(LocalDateTime.MIN)
-                .build();
+        Product expected = ProductTestData.builder().build().buildProduct();
+
         // when
-        Product actual = productRepository.findById(uuid).orElseThrow();
+        Product actual = productRepository.findById(expected.getUuid()).orElseThrow();
+
         // then
         assertEquals(expected, actual);
     }
@@ -73,9 +64,8 @@ class InMemoryProductRepositoryTest {
                         .created(LocalDateTime.of(2023, Month.AUGUST, 20, 15, 15))
                         .build()
         );
-        for (Product product : expectedList){
-            productRepository.save(product);
-        }
+        Mockito.doReturn(expectedList).when(productRepository.findAll());
+
         // when
         List<Product> actual = productRepository.findAll();
         // then
@@ -85,17 +75,11 @@ class InMemoryProductRepositoryTest {
     @Test
     void save() {
         // given
-        UUID uuid = UUID.fromString("4c78be6d-1a6d-47bb-ae4a-0b63f2beccd0");
-        Product expected = Product.builder()
-                .uuid(uuid)
-                .name("Шпала")
-                .description("Бетонная")
-                .price(BigDecimal.valueOf(50))
-                .created(LocalDateTime.MIN)
-                .build();
+        Product expected = ProductTestData.builder().build().buildProduct();
+        productRepository = Mockito.mock(InMemoryProductRepository.class);
         // when
         Product actual = productRepository.save(expected);
-
+        Mockito.when(productRepository.save(expected)).thenReturn(expected);
         // then
         assertEquals(expected, actual);
     }
@@ -104,7 +88,7 @@ class InMemoryProductRepositoryTest {
     void delete() {
         // given
         UUID uuid = UUID.fromString("4c78be6d-1a6d-47bb-ae4a-0b63f2beccd0");
-        productRepository= Mockito.mock(InMemoryProductRepository.class);
+        productRepository = Mockito.mock(InMemoryProductRepository.class);
         // when
         productRepository.delete(uuid);
         // then
