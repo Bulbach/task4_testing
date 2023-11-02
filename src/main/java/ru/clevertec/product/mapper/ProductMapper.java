@@ -4,6 +4,8 @@ import ru.clevertec.product.data.InfoProductDto;
 import ru.clevertec.product.data.ProductDto;
 import ru.clevertec.product.entity.Product;
 
+import java.util.List;
+
 public interface ProductMapper {
 
     /**
@@ -31,4 +33,6 @@ public interface ProductMapper {
      * @return обновлённый продукт
      */
     Product merge(Product product, ProductDto productDto);
+
+    List<InfoProductDto> toListInfoProductDto(List<Product> products);
 }
