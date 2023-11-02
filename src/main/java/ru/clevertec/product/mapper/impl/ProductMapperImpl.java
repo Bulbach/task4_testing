@@ -5,6 +5,8 @@ import ru.clevertec.product.data.ProductDto;
 import ru.clevertec.product.entity.Product;
 import ru.clevertec.product.mapper.ProductMapper;
 
+import java.util.List;
+
 public class ProductMapperImpl implements ProductMapper {
 
     @Override
@@ -19,6 +21,11 @@ public class ProductMapperImpl implements ProductMapper {
 
     @Override
     public Product merge(Product product, ProductDto productDto) {
+        return null;
+    }
+
+    @Override
+    public List<InfoProductDto> toListInfoProductDto(List<Product> products) {
         return null;
     }
 }
